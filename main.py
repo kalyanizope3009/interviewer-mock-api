@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-import uvicorn
 
 app = FastAPI(
     title="Interviewer Mock API",
@@ -11,5 +10,8 @@ app = FastAPI(
 async def health_check():
     return {"status": "healthy", "service": "interviewer-mock-api"}
 
+
+# This is important for Vercel
 if __name__ == "__main__":
+    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

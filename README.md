@@ -1,52 +1,91 @@
-# Interviewer Mock API
+# AI Mock Interviewer API
 
-A simple FastAPI-based mock API with health check endpoint, designed for deployment on Vercel.
+Backend API for the AI-powered mock interview system. This API generates personalized interview questions using fine-tuned Mistral 7B models with LoRA adapters.
 
 ## Features
 
-- **Health Check Endpoint**: Simple monitoring endpoint
-- **FastAPI Framework**: Modern, fast web framework for building APIs
-- **Vercel Deployment Ready**: Configured for serverless deployment
-- **Minimal Dependencies**: Lightweight and fast
+- **PDF Resume Parsing**: Converts PDF resumes to text for personalized questions
+- **AI Integration**: Calls your fine-tuned Mistral 7B model with appropriate adapters
+- **Session Management**: Tracks interview sessions with unique IDs
+- **Question Generation**: Creates tailored questions based on domain, resume, and job description
+- **Answer Collection**: Stores user responses for evaluation
+
+## Database Schema
+
+The API is designed to work with the following database tables:
+
+- `sessions`: Stores interview session metadata
+- `questions`: Stores generated questions with predicted answers
+- `user_answers`: Stores user responses to questions
+- `evaluations`: Stores session evaluation results
 
 ## API Endpoints
 
+### Core Endpoints
+
+- `POST /gen_questions` - Generate interview questions
+- `GET /sessions/{session_id}` - Get session information
+- `POST /sessions/{session_id}/answers` - Submit user answers
+- `GET /sessions` - List all active sessions
+- `DELETE /sessions/{session_id}` - End a session
+
 ### Health Check
-- `GET /health` - Health check endpoint
-  - **Response**: `{"status": "healthy", "service": "interviewer-mock-api"}`
 
-## Local Development
+- `GET /health` - API health status
 
-### Prerequisites
-- Python 3.8+
-- pip
+## Adapter Mapping
 
-### Setup
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Run the development server:
-   ```bash
-   python main.py
-   ```
-4. Test the health endpoint:
-   ```bash
-   curl http://localhost:8000/health
-   ```
+The API maps interview types to AI model adapters:
 
-### API Documentation
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+- `HR` → `finetuned_Hr`
+- `Behavioral` → `finetuned_Behavioral`
+- `Technical` → `finetuned_Technical`
+- `Coding` → `finetuned_Dsa`
+- `All` → `finetuned_Sql`
 
-## Deployment on Vercel
-api link: https://interviewer-mock-api.vercel.app/docs
+## Installation
 
+1. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-### GitHub Integration
+2. Run the API:
+```bash
+python main.py
+```
 
-1. Push your code to GitHub
-2. Connect your GitHub repository to Vercel
-3. Vercel will automatically deploy on every push
+## Configuration
 
+Update the AI model URL in `ai_client.py`:
+```python
+base_url = "https://your-ngrok-url.ngrok-free.app"
+```
+
+## Testing
+
+Run the test script to verify API functionality:
+```bash
+python test_api.py
+```
+
+## Deployment
+
+The API is configured for Vercel deployment with `vercel.json`.
+
+## Models
+
+The API uses Pydantic models that match the database schema:
+
+- `Session`: Session metadata
+- `Question`: Interview questions
+- `UserAnswer`: User responses
+- `Evaluation`: Session evaluations
+
+## Error Handling
+
+Comprehensive error handling with proper HTTP status codes and detailed error messages.
+
+## Logging
+
+Structured logging for debugging and monitoring API operations.
